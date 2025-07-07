@@ -119,7 +119,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel className="bg-[#1a1a1a] border-white/10 text-[#f8f8f8] hover:bg-[#1a1a1a]/80">
+                  <AlertDialogCancel className="bg-[#1a1a1a] border-[#f8f8f8]/30 text-[#f8f8f8] hover:bg-[#1a1a1a]/80 hover:border-[#f8f8f8]/50">
                     Annuler
                   </AlertDialogCancel>
                   <AlertDialogAction

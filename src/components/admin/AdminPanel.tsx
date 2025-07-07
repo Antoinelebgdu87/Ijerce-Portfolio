@@ -195,7 +195,7 @@ export const AdminPanel: React.FC = () => {
                     <Button
                       variant="outline"
                       onClick={() => setCurrentView("projects")}
-                      className="border-[#f983e2] text-[#f983e2] hover:bg-[#f983e2] hover:text-black"
+                      className="border-[#f983e2]/50 text-[#f983e2] hover:bg-[#f983e2] hover:text-black hover:border-[#f983e2]"
                     >
                       Voir tous les projets
                     </Button>
@@ -356,7 +356,7 @@ export const AdminPanel: React.FC = () => {
                 variant="outline"
                 size="sm"
                 asChild
-                className="border-white/10 text-[#f8f8f8] hover:bg-white/5"
+                className="border-[#f983e2]/50 text-[#f983e2] hover:bg-[#f983e2]/10 hover:border-[#f983e2]"
               >
                 <a href="/" target="_blank" rel="noopener noreferrer">
                   <Home className="w-4 h-4 mr-2" />

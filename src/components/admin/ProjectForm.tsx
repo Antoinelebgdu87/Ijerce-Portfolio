@@ -278,7 +278,7 @@ export const ProjectForm: React.FC<ProjectFormProps> = ({
                 type="button"
                 variant="outline"
                 onClick={onCancel}
-                className="border-white/10 text-[#f8f8f8] hover:bg-white/5"
+                className="border-[#f8f8f8]/30 text-[#f8f8f8] hover:bg-[#f8f8f8]/10 hover:border-[#f8f8f8]/50"
               >
                 Annuler
               </Button>
