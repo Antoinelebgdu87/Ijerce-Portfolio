@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { LoadingAnimation } from "@/components/ui/loading-animation";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { useProjects } from "@/contexts/ProjectsContext";
 import {
   Play,
   Mail,
@@ -53,25 +54,7 @@ const clients = [
   },
 ];
 
-const portfolioItems = [
-  {
-    title: "MON HISTOIRE DANS LE MONTAGE VIDEO",
-    thumbnail: "https://img.youtube.com/vi/BSwtm2mBYUg/maxresdefault.jpg",
-    duration: "À voir",
-    views: "Nouveau",
-    youtubeUrl: "https://youtu.be/BSwtm2mBYUg",
-    videoId: "BSwtm2mBYUg",
-  },
-  {
-    title: "GRENADES et POINGS CONTRE FUGU_FPS",
-    thumbnail: "https://img.youtube.com/vi/4jkMgut_1hc/maxresdefault.jpg",
-    duration: "À voir",
-    views: "Nouveau",
-    youtubeUrl: "https://youtu.be/4jkMgut_1hc",
-    videoId: "4jkMgut_1hc",
-  },
-  
-];
+
 
 const services = [
   {
@@ -116,6 +99,7 @@ export default function Index() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { projects } = useProjects();
 
   useEffect(() => {
     // Simulate loading time for smooth transition
@@ -125,6 +109,18 @@ export default function Index() {
     }, 2000);
 
     return () => clearTimeout(timer);
+  }, []);
+
+  // Listen for real-time project updates
+  useEffect(() => {
+    const handleProjectsUpdate = () => {
+      // Force a re-render when projects are updated from admin panel
+      // The useProjects hook will automatically provide the updated data
+    };
+
+    window.addEventListener("projectsUpdated", handleProjectsUpdate);
+    return () =>
+      window.removeEventListener("projectsUpdated", handleProjectsUpdate);
   }, []);
 
   useEffect(() => {
@@ -450,7 +446,7 @@ export default function Index() {
                     </div>
                     <div className="text-center">
                       <div className="text-3xl font-bold text-[#f983e2]">
-                        20+
+                        {projects.length || 20}+
                       </div>
                       <div className="text-sm text-[#f8f8f8]/60">
                         Projets réalisés
@@ -503,53 +499,63 @@ export default function Index() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {portfolioItems.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  variants={itemVariants}
-                  whileHover={{ scale: 1.02, y: -5 }}
-                  className="group cursor-pointer"
-                  onClick={() => window.open(item.youtubeUrl, "_blank")}
-                >
-                  <Card className="bg-[#292929] border-white/10 hover:border-[#f983e2]/50 transition-all duration-300 overflow-hidden">
-                    <div className="relative">
-                      <img
-                        src={item.thumbnail}
-                        alt={item.title}
-                        className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          e.currentTarget.src = "/placeholder.svg";
-                        }}
-                      />
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-                      <div className="absolute top-4 right-4 bg-black/80 px-2 py-1 rounded text-sm font-medium">
-                        {item.duration}
-                      </div>
-                      <div className="absolute top-4 left-4 bg-red-600 px-2 py-1 rounded text-xs font-bold text-white">
-                        YOUTUBE
-                      </div>
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-[#f983e2] rounded-full p-4">
-                          <Play className="h-6 w-6 text-black fill-current" />
+            {projects.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                {projects.slice(0, 6).map((item, index) => (
+                  <motion.div
+                    key={item.id}
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.02, y: -5 }}
+                    className="group cursor-pointer"
+                    onClick={() => window.open(item.youtubeUrl, "_blank")}
+                  >
+                    <Card className="bg-[#292929] border-white/10 hover:border-[#f983e2]/50 transition-all duration-300 overflow-hidden">
+                      <div className="relative">
+                        <img
+                          src={item.thumbnail}
+                          alt={item.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder.svg";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+                        <div className="absolute top-4 right-4 bg-black/80 px-2 py-1 rounded text-sm font-medium">
+                          {item.duration}
+                        </div>
+                        <div className="absolute top-4 left-4 bg-red-600 px-2 py-1 rounded text-xs font-bold text-white">
+                          YOUTUBE
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="bg-[#f983e2] rounded-full p-4">
+                            <Play className="h-6 w-6 text-black fill-current" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                    <CardContent className="p-6">
-                      <h3 className="font-semibold text-lg mb-2 group-hover:text-[#f983e2] transition-colors">
-                        {item.title}
-                      </h3>
-                      <div className="flex items-center justify-between text-sm text-[#f8f8f8]/60">
-                        <span>{item.views}</span>
-                        <div className="flex items-center space-x-1">
-                          <Youtube className="h-4 w-4 text-red-500" />
-                          <span>Voir sur YouTube</span>
+                      <CardContent className="p-6">
+                        <h3 className="font-semibold text-lg mb-2 group-hover:text-[#f983e2] transition-colors">
+                          {item.title}
+                        </h3>
+                        <div className="flex items-center justify-between text-sm text-[#f8f8f8]/60">
+                          <span>{item.views}</span>
+                          <div className="flex items-center space-x-1">
+                            <Youtube className="h-4 w-4 text-red-500" />
+                            <span>Voir sur YouTube</span>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Youtube className="h-16 w-16 text-[#f8f8f8]/20 mx-auto mb-4" />
+                <p className="text-lg text-[#f8f8f8]/60">
+                  Aucun projet disponible pour le moment
+                </p>
+              </div>
+            )}
             </div>
 
             <div className="text-center mt-12">
@@ -751,7 +757,7 @@ export default function Index() {
             <div className="border-t border-white/10 pt-8 text-center">
               <p className="text-[#f8f8f8]/60">
                 © 2025 Editing By iJerce.
-				
+
               </p>
             </div>
           </div>
