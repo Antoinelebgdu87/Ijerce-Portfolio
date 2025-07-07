@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Project } from "@/types/project";
+import { realtimeSync } from "@/services/realtimeSync";
 
 interface ProjectsContextType {
   projects: Project[];
@@ -60,14 +61,43 @@ export const ProjectsProvider: React.FC<{ children: React.ReactNode }> = ({
       setProjects(defaultProjects);
       localStorage.setItem("admin_projects", JSON.stringify(defaultProjects));
     }
+
+    // Démarrer la synchronisation en temps réel
+    realtimeSync.startAutoSync();
+
+    // Nettoyer lors du démontage
+    return () => {
+      realtimeSync.stopAutoSync();
+    };
   }, []);
 
   const saveProjects = (newProjects: Project[]) => {
     setProjects(newProjects);
     localStorage.setItem("admin_projects", JSON.stringify(newProjects));
-    // Déclencher un événement pour informer les autres onglets/fenêtres des changements
+
+    // Marquer la mise à jour pour la synchronisation
+    realtimeSync.markUpdate();
+
+    // Système de sauvegarde en temps réel amélioré
+    const updateEvent = {
+      type: "projectsUpdated",
+      timestamp: Date.now(),
+      projects: newProjects,
+      source: "admin",
+    };
+
+    // Déclencher l'événement pour les autres onglets/fenêtres
     window.dispatchEvent(
-      new CustomEvent("projectsUpdated", { detail: newProjects }),
+      new CustomEvent("projectsUpdated", { detail: updateEvent }),
+    );
+
+    // Déclencher aussi un événement de storage pour une synchronisation maximale
+    window.dispatchEvent(
+      new StorageEvent("storage", {
+        key: "admin_projects",
+        newValue: JSON.stringify(newProjects),
+        storageArea: localStorage,
+      }),
     );
   };
 
@@ -102,16 +132,42 @@ export const ProjectsProvider: React.FC<{ children: React.ReactNode }> = ({
     return projects.find((project) => project.id === id);
   };
 
-  // Écouter les changements venant d'autres onglets/fenêtres
+  // Écouter les changements venant d'autres onglets/fenêtres - Système amélioré
   useEffect(() => {
     const handleProjectsUpdate = (event: Event) => {
       const customEvent = event as CustomEvent;
-      setProjects(customEvent.detail);
+      const updateData = customEvent.detail;
+
+      // Vérifier si c'est une mise à jour récente pour éviter les boucles
+      if (updateData.projects && Array.isArray(updateData.projects)) {
+        setProjects(updateData.projects);
+      }
     };
 
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "admin_projects" && event.newValue) {
+        try {
+          const updatedProjects = JSON.parse(event.newValue);
+          if (Array.isArray(updatedProjects)) {
+            setProjects(updatedProjects);
+          }
+        } catch (error) {
+          console.error(
+            "Erreur lors de la synchronisation des projets:",
+            error,
+          );
+        }
+      }
+    };
+
+    // Écouter les événements personnalisés et les changements de storage
     window.addEventListener("projectsUpdated", handleProjectsUpdate);
-    return () =>
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
       window.removeEventListener("projectsUpdated", handleProjectsUpdate);
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   return (

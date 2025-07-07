@@ -84,7 +84,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="pl-10 bg-[#1a1a1a] border-white/10 text-[#f8f8f8] focus:border-[#f983e2]"
-                    placeholder="admin"
+                    placeholder="Nom d'utilisateur"
                     required
                   />
                 </div>
@@ -102,7 +102,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-10 pr-10 bg-[#1a1a1a] border-white/10 text-[#f8f8f8] focus:border-[#f983e2]"
-                    placeholder="admin123"
+                    placeholder="Mot de passe"
                     required
                   />
                   <button
@@ -140,12 +140,6 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
                 {isLoading ? "Connexion..." : "Se connecter"}
               </Button>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-xs text-[#f8f8f8]/40">
-                Demo: admin / admin123
-              </p>
-            </div>
           </CardContent>
         </Card>
       </motion.div>

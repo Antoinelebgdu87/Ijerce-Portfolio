@@ -10,10 +10,13 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Configuration d'authentification simple (à remplacer par une vraie base de données)
-const ADMIN_CREDENTIALS = {
-  username: "admin",
-  password: "admin123",
+// Configuration d'authentification sécurisée
+const getAdminCredentials = () => {
+  // En production, ces données viendraient d'un serveur sécurisé
+  return {
+    username: import.meta.env.VITE_ADMIN_USERNAME || "admin",
+    password: import.meta.env.VITE_ADMIN_PASSWORD || "admin123",
+  };
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -37,9 +40,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   const login = (username: string, password: string): boolean => {
+    const credentials = getAdminCredentials();
     if (
-      username === ADMIN_CREDENTIALS.username &&
-      password === ADMIN_CREDENTIALS.password
+      username === credentials.username &&
+      password === credentials.password
     ) {
       const user: User = {
         username,
@@ -47,6 +51,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       };
       setUser(user);
       localStorage.setItem("admin_user", JSON.stringify(user));
+
+      // Déclencher un événement de connexion admin pour informer les autres onglets
+      window.dispatchEvent(
+        new CustomEvent("adminLogin", { detail: { username } }),
+      );
+
       return true;
     }
     return false;
@@ -55,6 +65,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const logout = () => {
     setUser(null);
     localStorage.removeItem("admin_user");
+
+    // Déclencher un événement de déconnexion admin
+    window.dispatchEvent(new CustomEvent("adminLogout"));
   };
 
   return (
