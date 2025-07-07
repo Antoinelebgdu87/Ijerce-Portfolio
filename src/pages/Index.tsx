@@ -54,8 +54,6 @@ const clients = [
   },
 ];
 
-
-
 const services = [
   {
     icon: Monitor,
@@ -556,7 +554,6 @@ export default function Index() {
                 </p>
               </div>
             )}
-            </div>
 
             <div className="text-center mt-12">
               <Button
@@ -755,10 +752,7 @@ export default function Index() {
             </div>
 
             <div className="border-t border-white/10 pt-8 text-center">
-              <p className="text-[#f8f8f8]/60">
-                © 2025 Editing By iJerce.
-
-              </p>
+              <p className="text-[#f8f8f8]/60">© 2025 Editing By iJerce.</p>
             </div>
           </div>
         </footer>
