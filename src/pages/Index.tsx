@@ -752,7 +752,15 @@ export default function Index() {
             </div>
 
             <div className="border-t border-white/10 pt-8 text-center">
-              <p className="text-[#f8f8f8]/60">© 2025 Editing By iJerce.</p>
+              <p className="text-[#f8f8f8]/60">
+                © 2025 Editing By iJerce.{" "}
+                <a
+                  href="/admin"
+                  className="text-[#f8f8f8]/40 hover:text-[#f983e2] transition-colors text-xs"
+                >
+                  Admin
+                </a>
+              </p>
             </div>
           </div>
         </footer>
