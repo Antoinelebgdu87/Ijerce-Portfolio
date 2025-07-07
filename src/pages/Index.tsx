@@ -233,6 +233,15 @@ export default function Index() {
                     )}
                   </motion.button>
                 ))}
+
+                <motion.a
+                  href="/admin"
+                  className="text-sm font-medium transition-colors relative text-red-500 hover:text-red-400 border border-red-500 hover:border-red-400 px-3 py-1.5 rounded-md ml-4"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  Admin
+                </motion.a>
               </div>
 
               {/* Mobile menu button */}
